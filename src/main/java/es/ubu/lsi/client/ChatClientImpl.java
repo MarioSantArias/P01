@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import es.ubu.lsi.common.ChatMessage;
+import es.ubu.lsi.common.MessageType;
 
 public class ChatClientImpl implements ChatClient {
 	private String server;
@@ -64,22 +65,38 @@ public class ChatClientImpl implements ChatClient {
 	
 	public static void main(String[] args){
 		final int PUERTO = 1500;
-		String user;
-		String ip;
-				
+		String user, ip, read;
+		ChatMessage msg;
+		Scanner sc = new Scanner(System.in);
+		
 		if(args.length!=2){
 			ip = "localhost";
 			System.out.println("- Introducir nombre de usuario: ");
-			Scanner sc = new Scanner(System.in);
 			user = sc.nextLine();
-			sc.close();	
 		}else{
 			ip = args[0];
 			user = args[1];
 		}
 		ChatClientImpl cliente = new ChatClientImpl(ip, PUERTO, user);
 		
+		System.out.println("Se ha conectado como: " + user);
+		boolean flagContinue = true;
+		{
+			read = sc.nextLine();
+			if(!(read.equals("logout"))){
+				msg = new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read);		
+			}else{
+				flagContinue = false;	
+			}
+
+		}while(flagContinue);
 		
+		try {
+			cliente.socket.close();
+			sc.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-	
 }
