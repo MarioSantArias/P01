@@ -1,6 +1,5 @@
 package es.ubu.lsi.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -8,7 +7,6 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import es.ubu.lsi.common.ChatMessage;
-import es.ubu.lsi.common.MessageType;
 
 public class ChatClientImpl implements ChatClient {
 	private String server;
@@ -30,6 +28,9 @@ public class ChatClientImpl implements ChatClient {
 		
 		try {
 			socket = new Socket(server, port);
+			//Al conectar con el servidor enviamos el nombre de usuario con el que se ha conectado
+			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+			out.println(username);
 			new ChatClientListener();
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + server);
@@ -51,15 +52,14 @@ public class ChatClientImpl implements ChatClient {
 			System.err.println("Couldn't get I/O for the connection to " + server);
 			System.exit(1);
 		}
-		
 	}
 
 	public void disconnect() {
 		try {
 			socket.close();
+			System.exit(1);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return;
 		}
 	}
 	
@@ -78,25 +78,23 @@ public class ChatClientImpl implements ChatClient {
 			user = args[1];
 		}
 		ChatClientImpl cliente = new ChatClientImpl(ip, PUERTO, user);
+		cliente.start();
 		
 		System.out.println("Se ha conectado como: " + user);
 		boolean flagContinue = true;
-		{
-			read = sc.nextLine();
-			if(!(read.equals("logout"))){
-				msg = new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read);		
-			}else{
-				flagContinue = false;	
-			}
-
-		}while(flagContinue);
 		
-		try {
-			cliente.socket.close();
-			sc.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while(flagContinue){
+			read = sc.nextLine();
+			if(read.equals("logout")){
+				flagContinue = false;		
+			}else{
+				msg = new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read);
+				cliente.sendMessage(msg);
+			}
 		}
+		
+		sc.close();
+		cliente.disconnect();
+
 	}
 }
