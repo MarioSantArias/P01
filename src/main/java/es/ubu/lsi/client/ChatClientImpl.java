@@ -31,7 +31,7 @@ public class ChatClientImpl implements ChatClient {
 			//Al conectar con el servidor enviamos el nombre de usuario con el que se ha conectado
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 			out.println(username);
-			new ChatClientListener();
+			new ChatClientListener(socket);
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + server);
 			System.exit(1);
@@ -47,7 +47,6 @@ public class ChatClientImpl implements ChatClient {
 		try {
 			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 			out.println(msg);
-
 		} catch (IOException e) {
 			System.err.println("Couldn't get I/O for the connection to " + server);
 			System.exit(1);
