@@ -21,7 +21,7 @@ public class ChatClientListener implements Runnable {
 			String inputLine;
 			while ((inputLine = in.readLine()) != null) 
 			{
-				System.out.println("He recibido: " + inputLine + "\n");
+				System.out.println(inputLine + "\n");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

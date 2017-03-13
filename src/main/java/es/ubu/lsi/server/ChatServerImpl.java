@@ -23,11 +23,13 @@ public class ChatServerImpl implements ChatServer {
 
 	public ChatServerImpl() {
 		this.port = DEFAULT_PORT;
+		clientId = 0;
 		conectedClients = new ArrayList<ServerThreadForClient>();
 	}
 
 	public ChatServerImpl(int port) {
 		this.port = port;
+		clientId = 0;
 		conectedClients = new ArrayList<ServerThreadForClient>();
 	}
 
@@ -39,7 +41,7 @@ public class ChatServerImpl implements ChatServer {
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
 				System.out.println("Se ha conectado el cliente.");
-				ServerThreadForClient thread = new ServerThreadForClient(this, clientSocket);
+				ServerThreadForClient thread = new ServerThreadForClient(clientId++, this, clientSocket);
 				thread.start();
 				conectedClients.add(thread);
 			}
@@ -69,8 +71,10 @@ public class ChatServerImpl implements ChatServer {
 		PrintWriter out;
 		for (ServerThreadForClient client : conectedClients) {
 			try {
-				out = new PrintWriter(client.getClientSocket().getOutputStream(), true);
-				out.println(message.getMessage());
+				if (message.getId() != client.getClientId()) {
+					out = new PrintWriter(client.getClientSocket().getOutputStream(), true);
+					out.println(message.getMessage());
+				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -82,6 +86,7 @@ public class ChatServerImpl implements ChatServer {
 	public void remove(int id) {
 		for (int i = 0; i < conectedClients.size(); i++) {
 			if (conectedClients.get(i).getClientId() == id) {
+				conectedClients.get(i).interrupt();
 				conectedClients.remove(i);
 				break;
 			}
@@ -101,18 +106,18 @@ public class ChatServerImpl implements ChatServer {
 		}
 		return instance;
 	}
-	
-	public static void main(String[] args){
+
+	public static void main(String[] args) {
 		ChatServerImpl chatServer;
-		
-		if(args.length != 1){
+
+		if (args.length != 1) {
 			System.out.println("Se usara el puerto por defecto: 1500");
-			 chatServer = getInstance();
-		}else{
+			chatServer = getInstance();
+		} else {
 			System.out.println("Se usara el puerto: " + args[0]);
-			 chatServer = getInstance(Integer.parseInt(args[0]));
+			chatServer = getInstance(Integer.parseInt(args[0]));
 		}
-		
+
 		System.out.println("Iniciando el servidor...");
 		chatServer.startup();
 	}

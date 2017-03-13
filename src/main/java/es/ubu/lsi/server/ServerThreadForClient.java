@@ -14,7 +14,8 @@ public class ServerThreadForClient extends Thread {
 	private Socket clientSocket;
 	private ChatServerImpl chatServer;
 
-	public ServerThreadForClient(ChatServerImpl chatserver, Socket clientSocket) {
+	public ServerThreadForClient(int id, ChatServerImpl chatserver, Socket clientSocket) {
+		this.id = id;
 		this.clientSocket = clientSocket;
 		this.chatServer = chatserver;
 	}
@@ -22,20 +23,23 @@ public class ServerThreadForClient extends Thread {
 	@Override
 	public void run() {
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			BufferedReader  in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
 			System.out.println("Se ha conectado el cliente con IP: " + clientSocket.getInetAddress().getHostAddress()
 					+ " y puerto: " + clientSocket.getPort() + "\n");
 			String inputLine;
+			username = in.readLine();
+			System.out.println("Se ha conectado el usuario: " + username + "\n");
 			
 			while ((inputLine = in.readLine()) != null) {
-				System.out.println("He recibido: " + inputLine + "\n");
-				ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, inputLine);
+				System.out.println(username + " envió: " + inputLine + "\n");
+				ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username + " : " +inputLine);
 				chatServer.broadcast(msg);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			chatServer.remove(id);
+			this.interrupt();
 		}
 
 	}
