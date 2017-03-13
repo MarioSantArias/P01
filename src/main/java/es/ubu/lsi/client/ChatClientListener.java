@@ -1,14 +1,15 @@
 package es.ubu.lsi.client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.Socket;
+
+import es.ubu.lsi.common.ChatMessage;
 
 public class ChatClientListener implements Runnable {
 
 	private Socket socket;
-	
+
 	public ChatClientListener(Socket socket) {
 		this.socket = socket;
 	}
@@ -16,15 +17,16 @@ public class ChatClientListener implements Runnable {
 	@Override
 	public void run() {
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			
-			String inputLine;
-			while ((inputLine = in.readLine()) != null) 
-			{
-				System.out.println(inputLine + "\n");
+			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+
+			ChatMessage inputLine;
+			System.out.println("Escuchando mensajes");
+			while (!((inputLine = (ChatMessage) in.readObject()).equals(null))) {
+				System.out.println(inputLine.getMessage() + "\n");
 			}
-		} catch (IOException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	}
+		}
+	}
 }

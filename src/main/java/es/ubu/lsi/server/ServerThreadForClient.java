@@ -1,8 +1,7 @@
 package es.ubu.lsi.server;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.Socket;
 
 import es.ubu.lsi.common.ChatMessage;
@@ -23,21 +22,28 @@ public class ServerThreadForClient extends Thread {
 	@Override
 	public void run() {
 		try {
-			BufferedReader  in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			ObjectInputStream in = new ObjectInputStream(this.clientSocket.getInputStream());
 
-			System.out.println("Se ha conectado el cliente con IP: " + clientSocket.getInetAddress().getHostAddress()
-					+ " y puerto: " + clientSocket.getPort() + "\n");
-			String inputLine;
-			username = in.readLine();
-			System.out.println("Se ha conectado el usuario: " + username + "\n");
-			
-			while ((inputLine = in.readLine()) != null) {
+//			System.out.println("Se ha conectado el cliente con IP: " + clientSocket.getInetAddress().getHostAddress()
+//					+ " y puerto: " + clientSocket.getPort() + "\n");
+			ChatMessage inputLine = (ChatMessage) in.readObject();
+
+			System.out.println("Se ha conectado un cliente:");
+			System.out.println("\t- IP: " + clientSocket.getInetAddress().getHostAddress());
+			System.out.println("\t- PORT: " + clientSocket.getPort());
+			System.out.println("\t- USERNAME: " + inputLine.getMessage() + "\n");
+			System.out.println("asdcgggh" + in.readObject());
+
+			inputLine = null;
+
+			System.out.println("asdcgggh" + in.readObject());
+			while (!((inputLine = (ChatMessage) in.readObject()).equals(null))) {
 				System.out.println(username + " envió: " + inputLine + "\n");
-				ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username + " : " +inputLine);
+				ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username + " : " + inputLine);
 				chatServer.broadcast(msg);
 			}
-		} catch (IOException e) {
-			//e.printStackTrace();
+		} catch (IOException | ClassNotFoundException e) {
+			// e.printStackTrace();
 			chatServer.remove(id);
 			this.interrupt();
 		}
@@ -47,8 +53,8 @@ public class ServerThreadForClient extends Thread {
 	public int getClientId() {
 		return id;
 	}
-	
-	public Socket getClientSocket(){
+
+	public Socket getClientSocket() {
 		return clientSocket;
 	}
 }

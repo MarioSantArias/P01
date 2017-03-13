@@ -1,7 +1,7 @@
 package es.ubu.lsi.client;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -29,9 +29,9 @@ public class ChatClientImpl implements ChatClient {
 			socket = new Socket(server, port);
 			// Al conectar con el servidor enviamos el nombre de usuario con el
 			// que se ha conectado
-			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-			out.println(username);
-			
+			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+			out.writeObject(new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username));
+
 			chatClientListenter = new Thread(new ChatClientListener(socket));
 			chatClientListenter.start();
 		} catch (UnknownHostException e) {
@@ -47,8 +47,9 @@ public class ChatClientImpl implements ChatClient {
 
 	public void sendMessage(ChatMessage msg) {
 		try {
-			PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-			out.println(msg.getMessage());
+			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+			out.writeObject(msg);
+
 		} catch (IOException e) {
 			carryOn = false;
 			System.err.println("Couldn't get I/O for the connection to " + server);

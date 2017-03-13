@@ -1,7 +1,7 @@
 package es.ubu.lsi.server;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -38,9 +38,11 @@ public class ChatServerImpl implements ChatServer {
 		try {
 			serverSocket = new ServerSocket(port);
 			System.out.println("Servidor iniciado, esperando conexiones.");
+			System.out.println("--------------------------------------------\n");
+
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
-				System.out.println("Se ha conectado el cliente.");
+//				System.out.println("Se ha conectado el cliente.");
 				ServerThreadForClient thread = new ServerThreadForClient(clientId++, this, clientSocket);
 				thread.start();
 				conectedClients.add(thread);
@@ -68,12 +70,13 @@ public class ChatServerImpl implements ChatServer {
 
 	@Override
 	public synchronized void broadcast(ChatMessage message) {
-		PrintWriter out;
+		ObjectOutputStream out;
 		for (ServerThreadForClient client : conectedClients) {
 			try {
 				if (message.getId() != client.getClientId()) {
-					out = new PrintWriter(client.getClientSocket().getOutputStream(), true);
-					out.println(message.getMessage());
+					out = new ObjectOutputStream(client.getClientSocket().getOutputStream());
+					out.writeObject(message);
+					System.out.println("Enviando broadcast");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -111,7 +114,7 @@ public class ChatServerImpl implements ChatServer {
 		ChatServerImpl chatServer;
 
 		if (args.length != 1) {
-			System.out.println("Se usara el puerto por defecto: 1500");
+			System.out.println("Se usará el puerto por defecto: 1500");
 			chatServer = getInstance();
 		} else {
 			System.out.println("Se usara el puerto: " + args[0]);
