@@ -23,31 +23,31 @@ public class ServerThreadForClient extends Thread {
 	public void run() {
 		try {
 			ObjectInputStream in = new ObjectInputStream(this.clientSocket.getInputStream());
+			ChatMessage inputLine;
 
-//			System.out.println("Se ha conectado el cliente con IP: " + clientSocket.getInetAddress().getHostAddress()
-//					+ " y puerto: " + clientSocket.getPort() + "\n");
-			ChatMessage inputLine = (ChatMessage) in.readObject();
-
+			inputLine = (ChatMessage) in.readObject();
+			username = inputLine.getMessage();
 			System.out.println("Se ha conectado un cliente:");
 			System.out.println("\t- IP: " + clientSocket.getInetAddress().getHostAddress());
 			System.out.println("\t- PORT: " + clientSocket.getPort());
-			System.out.println("\t- USERNAME: " + inputLine.getMessage() + "\n");
-			System.out.println("asdcgggh" + in.readObject());
+			System.out.println("\t- USERNAME: " + username + "\n");
 
-			inputLine = null;
-
-			System.out.println("asdcgggh" + in.readObject());
-			while (!((inputLine = (ChatMessage) in.readObject()).equals(null))) {
-				System.out.println(username + " envió: " + inputLine + "\n");
-				ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username + " : " + inputLine);
-				chatServer.broadcast(msg);
+			while ((inputLine = (ChatMessage) in.readObject()) != null) {
+				System.out.println(username + " envió: " + inputLine.getMessage());
+				if (!(inputLine.getType().equals(ChatMessage.MessageType.LOGOUT))) {
+					ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username + " : " + inputLine.getMessage());
+					chatServer.broadcast(msg);
+				} else {
+					break;
+				}
 			}
 		} catch (IOException | ClassNotFoundException e) {
-			// e.printStackTrace();
+			e.printStackTrace();
+		} finally {
+			System.out.println("El usuario " + username + " se ha desconectado.");
 			chatServer.remove(id);
 			this.interrupt();
 		}
-
 	}
 
 	public int getClientId() {

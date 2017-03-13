@@ -7,7 +7,7 @@ import java.net.Socket;
 import es.ubu.lsi.common.ChatMessage;
 
 public class ChatClientListener implements Runnable {
-
+	
 	private Socket socket;
 
 	public ChatClientListener(Socket socket) {
@@ -18,11 +18,9 @@ public class ChatClientListener implements Runnable {
 	public void run() {
 		try {
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-
 			ChatMessage inputLine;
-			System.out.println("Escuchando mensajes");
 			while (!((inputLine = (ChatMessage) in.readObject()).equals(null))) {
-				System.out.println(inputLine.getMessage() + "\n");
+				System.out.print(">" + inputLine.getMessage() + "\n>");
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block

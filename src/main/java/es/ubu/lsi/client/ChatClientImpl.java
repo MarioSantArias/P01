@@ -9,6 +9,7 @@ import java.util.Scanner;
 import es.ubu.lsi.common.ChatMessage;
 
 public class ChatClientImpl implements ChatClient {
+
 	private String server;
 	private String username;
 	private int port;
@@ -16,6 +17,7 @@ public class ChatClientImpl implements ChatClient {
 	private int id;
 	private Socket socket;
 	private Thread chatClientListenter;
+	private ObjectOutputStream msgToServer;
 
 	public ChatClientImpl(String server, int port, String username) {
 		this.server = server;
@@ -24,14 +26,12 @@ public class ChatClientImpl implements ChatClient {
 	}
 
 	public boolean start() {
-
 		try {
 			socket = new Socket(server, port);
 			// Al conectar con el servidor enviamos el nombre de usuario con el
 			// que se ha conectado
-			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-			out.writeObject(new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username));
-
+			msgToServer = new ObjectOutputStream(socket.getOutputStream());
+			sendMessage(new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username));
 			chatClientListenter = new Thread(new ChatClientListener(socket));
 			chatClientListenter.start();
 		} catch (UnknownHostException e) {
@@ -47,9 +47,8 @@ public class ChatClientImpl implements ChatClient {
 
 	public void sendMessage(ChatMessage msg) {
 		try {
-			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-			out.writeObject(msg);
-
+			msgToServer.reset();
+			msgToServer.writeObject(msg);
 		} catch (IOException e) {
 			carryOn = false;
 			System.err.println("Couldn't get I/O for the connection to " + server);
@@ -60,6 +59,7 @@ public class ChatClientImpl implements ChatClient {
 	public void disconnect() {
 		try {
 			chatClientListenter.interrupt();
+			msgToServer.close();
 			socket.close();
 			System.exit(1);
 		} catch (IOException e) {
@@ -78,7 +78,6 @@ public class ChatClientImpl implements ChatClient {
 	public static void main(String[] args) {
 		final int PUERTO = 1500;
 		String user, ip, read;
-		ChatMessage msg;
 		Scanner sc = new Scanner(System.in);
 
 		if (args.length != 2) {
@@ -92,23 +91,20 @@ public class ChatClientImpl implements ChatClient {
 		ChatClientImpl cliente = new ChatClientImpl(ip, PUERTO, user);
 
 		if (cliente.start()) {
-			System.out.println("Se ha conectado como: " + user);
+			System.out.println("Bienvenido " + user + "!");
 			boolean flagContinue = true;
 
 			while (flagContinue) {
+				System.out.print(">");
 				read = sc.nextLine();
 				if (read.equals("logout")) {
-					msg = new ChatMessage(cliente.id, ChatMessage.MessageType.LOGOUT, read);
-					cliente.sendMessage(msg);
+					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.LOGOUT, read));
 				} else {
-					msg = new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read);
-					cliente.sendMessage(msg);
+					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read));
 				}
 			}
 		}
-
 		sc.close();
 		cliente.disconnect();
-
 	}
 }

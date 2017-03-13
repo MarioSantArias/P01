@@ -11,7 +11,7 @@ import java.util.List;
 import es.ubu.lsi.common.ChatMessage;
 
 public class ChatServerImpl implements ChatServer {
-
+	
 	private static ChatServerImpl instance = null;
 	private final int DEFAULT_PORT = 1500;
 	private int clientId;
@@ -76,7 +76,6 @@ public class ChatServerImpl implements ChatServer {
 				if (message.getId() != client.getClientId()) {
 					out = new ObjectOutputStream(client.getClientSocket().getOutputStream());
 					out.writeObject(message);
-					System.out.println("Enviando broadcast");
 				}
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
