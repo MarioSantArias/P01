@@ -6,7 +6,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import es.ubu.lsi.common.ChatMessage;
 
@@ -20,17 +22,20 @@ public class ChatServerImpl implements ChatServer {
 	private boolean alive;
 	private ServerSocket serverSocket;
 	private List<ServerThreadForClient> conectedClients;
+	private Map<String,List<String>> banList;
 
 	public ChatServerImpl() {
 		this.port = DEFAULT_PORT;
 		clientId = 0;
 		conectedClients = new ArrayList<ServerThreadForClient>();
+		banList = new HashMap<String,List<String>>();
 	}
 
 	public ChatServerImpl(int port) {
 		this.port = port;
 		clientId = 0;
 		conectedClients = new ArrayList<ServerThreadForClient>();
+		banList = new HashMap<String,List<String>>();
 	}
 
 	@Override
@@ -123,5 +128,20 @@ public class ChatServerImpl implements ChatServer {
 		System.out.println("Iniciando el servidor...");
 		chatServer.startup();
 	}
-
+	
+	public void addNewUser(String username){
+		banList.put(username, new ArrayList<String>());
+	}
+	
+	public void addBan(String username, String banedUser){
+		ArrayList<String> bans = (ArrayList<String>) banList.get(username);
+		bans.add(banedUser);
+		banList.put(username, bans);
+	}
+	
+	public void removeBan(String username, String userToUnban){
+		ArrayList<String> bans = (ArrayList<String>) banList.get(username);
+		bans.remove(userToUnban);
+		banList.put(username, bans);
+	}
 }

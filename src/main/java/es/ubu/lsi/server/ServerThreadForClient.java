@@ -31,6 +31,7 @@ public class ServerThreadForClient extends Thread {
 			System.out.println("\t- IP: " + clientSocket.getInetAddress().getHostAddress());
 			System.out.println("\t- PORT: " + clientSocket.getPort());
 			System.out.println("\t- USERNAME: " + username + "\n");
+			chatServer.addNewUser(username);
 
 			while ((inputLine = (ChatMessage) in.readObject()) != null) {
 				System.out.println(username + " envió: " + inputLine.getMessage());
