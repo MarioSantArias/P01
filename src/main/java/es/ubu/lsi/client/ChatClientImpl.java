@@ -99,12 +99,12 @@ public class ChatClientImpl implements ChatClient {
 				read = sc.nextLine();
 				if (read.equals("logout")) {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.LOGOUT, read));
+					sc.close();
+					cliente.disconnect();
 				} else {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read));
 				}
 			}
 		}
-		sc.close();
-		cliente.disconnect();
 	}
 }
