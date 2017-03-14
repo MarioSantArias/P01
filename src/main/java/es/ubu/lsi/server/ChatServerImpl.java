@@ -6,9 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import es.ubu.lsi.common.ChatMessage;
 
@@ -77,6 +75,7 @@ public class ChatServerImpl implements ChatServer {
 			try {
 				if (message.getId() != client.getClientId()) {
 					out = new ObjectOutputStream(client.getClientSocket().getOutputStream());
+					out.reset();
 					out.writeObject(message);
 				}
 			} catch (IOException e) {
@@ -109,6 +108,10 @@ public class ChatServerImpl implements ChatServer {
 			instance = new ChatServerImpl(port);
 		}
 		return instance;
+	}
+	
+	public List<ServerThreadForClient> getConectedClients(){
+		return conectedClients;	
 	}
 
 	public static void main(String[] args) {

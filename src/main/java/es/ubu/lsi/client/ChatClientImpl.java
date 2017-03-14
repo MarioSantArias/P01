@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Scanner;
 
 import es.ubu.lsi.common.ChatMessage;
@@ -17,11 +16,10 @@ public class ChatClientImpl implements ChatClient {
 	private int port;
 	private boolean carryOn = true;
 	private int id;
-	private Socket socket;
+	private static Socket socket;
 	private Thread chatClientListenter;
 	private ObjectOutputStream msgToServer;
-	private static List<String> baneados;
-
+	
 	public ChatClientImpl(String server, int port, String username) {
 		this.server = server;
 		this.username = username;
@@ -77,6 +75,7 @@ public class ChatClientImpl implements ChatClient {
 	public void setCarryOn(boolean carryOn) {
 		this.carryOn = carryOn;
 	}
+	
 
 	public static void main(String[] args) {
 		final int PUERTO = 1500;
@@ -96,7 +95,6 @@ public class ChatClientImpl implements ChatClient {
 		if (cliente.start()) {
 			System.out.println("Bienvenido " + user + "!");
 			boolean flagContinue = true;
-			baneados = new ArrayList<String>();
 
 			while (flagContinue) {
 				System.out.print(">");
@@ -106,8 +104,8 @@ public class ChatClientImpl implements ChatClient {
 					sc.close();
 					cliente.disconnect();
 				} else if (read.split(" ")[0].equals("ban")) {
-					baneados.add(read.split(" ")[1]);
-//					System.out.println("Baneados: " + baneados.toString());
+						cliente.sendMessage(
+								new ChatMessage(cliente.id, ChatMessage.MessageType.BAN, read.split(" ")[1]));	
 				} else {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read));
 				}
