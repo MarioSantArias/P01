@@ -20,6 +20,7 @@ public class ChatClientListener implements Runnable {
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			ChatMessage inputLine;
 			while (!((inputLine = (ChatMessage) in.readObject()).equals(null))) {
+				
 				System.out.print(">" + inputLine.getMessage() + "\n>");
 			}
 		} catch (IOException | ClassNotFoundException e) {

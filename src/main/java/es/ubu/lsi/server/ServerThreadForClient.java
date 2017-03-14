@@ -31,12 +31,12 @@ public class ServerThreadForClient extends Thread {
 			System.out.println("\t- IP: " + clientSocket.getInetAddress().getHostAddress());
 			System.out.println("\t- PORT: " + clientSocket.getPort());
 			System.out.println("\t- USERNAME: " + username + "\n");
-			chatServer.addNewUser(username);
 
 			while ((inputLine = (ChatMessage) in.readObject()) != null) {
 				System.out.println(username + " envió: " + inputLine.getMessage());
 				if (!(inputLine.getType().equals(ChatMessage.MessageType.LOGOUT))) {
-					ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username + " : " + inputLine.getMessage());
+					ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE,
+							username + " : " + inputLine.getMessage());
 					chatServer.broadcast(msg);
 				} else {
 					break;
@@ -57,5 +57,9 @@ public class ServerThreadForClient extends Thread {
 
 	public Socket getClientSocket() {
 		return clientSocket;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 }
