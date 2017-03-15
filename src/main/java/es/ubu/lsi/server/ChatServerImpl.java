@@ -42,7 +42,6 @@ public class ChatServerImpl implements ChatServer {
 
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
-//				System.out.println("Se ha conectado el cliente.");
 				ServerThreadForClient thread = new ServerThreadForClient(clientId++, this, clientSocket);
 				thread.start();
 				conectedClients.add(thread);
@@ -84,7 +83,7 @@ public class ChatServerImpl implements ChatServer {
 			}
 		}
 	}
-
+	
 	@Override
 	public void remove(int id) {
 		for (int i = 0; i < conectedClients.size(); i++) {

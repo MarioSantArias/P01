@@ -23,14 +23,44 @@ public class ChatClientListener implements Runnable {
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			ChatMessage inputLine;
 			while (!((inputLine = (ChatMessage) in.readObject()).equals(null))) {
-				if (!baneados.containsKey(inputLine.getId())) {
-					if (!inputLine.getType().toString().equals("BAN")) {
+				switch(inputLine.getType()){
+				
+				case BAN:
+					baneados.put(inputLine.getId(), inputLine.getMessage());
+					System.out.print("El usuario \"" + baneados.get(inputLine.getId()) + "\" ha sido baneado.\n>");
+					break;
+				
+				case UNBAN:
+					baneados.remove(inputLine.getId());
+					System.out.print("El usuario \"" + inputLine.getMessage() + "\" ha sido eliminado de la lista de baneados.\n>");
+					break;
+					
+				case MESSAGE:
+					if (!baneados.containsKey(inputLine.getId())) {
 						System.out.print(">" + inputLine.getMessage() + "\n>");
-					} else {
-						baneados.put(inputLine.getId(), inputLine.getMessage());
-						System.out.println(baneados.get(inputLine.getId()) + "ha sido baneado.");
 					}
+					break;
+					
+				default:
+					System.err.println("Mensaje corrupto.");
+					break;
+				
 				}
+				
+				
+				
+//				if (!baneados.containsKey(inputLine.getId())) {
+//					
+//					if (!inputLine.getType().equals(ChatMessage.MessageType.BAN)) {
+//						System.out.print(">" + inputLine.getMessage() + "\n>");
+//						
+//					}else if (inputLine.getType().equals(ChatMessage.MessageType.UNBAN)){
+//						
+//					} else {
+//						baneados.put(inputLine.getId(), inputLine.getMessage());
+//						System.out.println("El usuario \"" + baneados.get(inputLine.getId()) + "\" ha sido baneado.");
+//					}
+//				}
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block

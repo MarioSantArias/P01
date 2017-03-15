@@ -24,6 +24,8 @@ public class ServerThreadForClient extends Thread {
 	public void run() {
 		try {
 			ObjectInputStream in = new ObjectInputStream(this.clientSocket.getInputStream());
+			ObjectOutputStream out = new ObjectOutputStream(this.clientSocket.getOutputStream());;
+
 			ChatMessage inputLine;
 
 			inputLine = (ChatMessage) in.readObject();
@@ -44,18 +46,32 @@ public class ServerThreadForClient extends Thread {
 					
 				case BAN:
 					int idBan = 0;
-					ObjectOutputStream out;
 					
 					for(ServerThreadForClient elem : chatServer.getConectedClients()){
 						if(elem.getUsername().equals(inputLine.getMessage())){
 							idBan = elem.getClientId();
+							break;
 						}
 					}	
 					msg = new ChatMessage(idBan, ChatMessage.MessageType.BAN, inputLine.getMessage());
-					out = new ObjectOutputStream(this.clientSocket.getOutputStream());
 					out.reset();
 					out.writeObject(msg);
 					break;
+				
+				case UNBAN:
+					int idUnBan = 0;
+					
+					for(ServerThreadForClient elem : chatServer.getConectedClients()){
+						if(elem.getUsername().equals(inputLine.getMessage())){
+							idUnBan = elem.getClientId();
+							break;
+						}
+					}	
+					msg = new ChatMessage(idUnBan, ChatMessage.MessageType.UNBAN, inputLine.getMessage());
+					out.reset();
+					out.writeObject(msg);
+					break;
+
 					
 				case LOGOUT:
 					System.out.println("El usuario " + username + " se ha desconectado.");
