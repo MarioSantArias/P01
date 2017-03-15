@@ -36,7 +36,8 @@ public class ServerThreadForClient extends Thread {
 			System.out.println("\t- IP: " + clientSocket.getInetAddress().getHostAddress());
 			System.out.println("\t- PORT: " + clientSocket.getPort());
 			System.out.println("\t- USERNAME: " + username + "\n");
-
+			chatServer.broadcast(new ChatMessage(id, ChatMessage.MessageType.UPDATEBAN, username));
+			
 			while ((inputLine = (ChatMessage) in.readObject()) != null) {
 				System.out.println(username + " envió: " + inputLine.getMessage());
 				ChatMessage msg;
@@ -47,32 +48,12 @@ public class ServerThreadForClient extends Thread {
 					break;
 					
 				case BAN:
-					int idBan = 0;
-					
-					for(ServerThreadForClient elem : chatServer.getConectedClients()){
-						if(elem.getUsername().equals(inputLine.getMessage())){
-							idBan = elem.getClientId();
-							break;
-						}
-					}	
-					msg = new ChatMessage(idBan, ChatMessage.MessageType.BAN, inputLine.getMessage());
-					out.reset();
-					out.writeObject(msg);
+					sendBanInfo(ChatMessage.MessageType.BAN, inputLine.getMessage());
 					System.out.println(username + " ha baneado a " + inputLine.getMessage());
 					break;
 				
 				case UNBAN:
-					int idUnBan = 0;
-					
-					for(ServerThreadForClient elem : chatServer.getConectedClients()){
-						if(elem.getUsername().equals(inputLine.getMessage())){
-							idUnBan = elem.getClientId();
-							break;
-						}
-					}	
-					msg = new ChatMessage(idUnBan, ChatMessage.MessageType.UNBAN, inputLine.getMessage());
-					out.reset();
-					out.writeObject(msg);
+					sendBanInfo(ChatMessage.MessageType.UNBAN, inputLine.getMessage());
 					System.out.println(username + " ha eliminado el baneado sobre " + inputLine.getMessage());
 					break;
 
@@ -92,6 +73,23 @@ public class ServerThreadForClient extends Thread {
 		} finally {
 			chatServer.remove(id);
 			this.interrupt();
+		}
+	}
+	
+	private void sendBanInfo(ChatMessage.MessageType msgType, String msg) {
+		try {
+			int id = 0;
+			for(ServerThreadForClient elem : chatServer.getConectedClients()){
+				if(elem.getUsername().equals(msg)){
+					id = elem.getClientId();
+					break;
+				}
+			}	
+			ChatMessage msgToSend = new ChatMessage(id, msgType, msg);
+			out.reset();
+			out.writeObject(msgToSend);
+		} catch (IOException e) {
+			System.err.println("Error al enviar mensaje con la informacion de ban/unban.");
 		}
 	}
 

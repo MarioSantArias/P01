@@ -35,6 +35,10 @@ public class ChatClientListener implements Runnable {
 					System.out.print("El usuario \"" + inputLine.getMessage() + "\" ha sido eliminado de la lista de baneados.\n>");
 					break;
 					
+				case UPDATEBAN:
+					baneados.put(inputLine.getId(), inputLine.getMessage());
+					break;
+					
 				case MESSAGE:
 					if (!baneados.containsKey(inputLine.getId())) {
 						System.out.print(">" + inputLine.getMessage() + "\n>");
