@@ -55,28 +55,21 @@ public class ServerThreadForClient extends Thread {
 					out = new ObjectOutputStream(this.clientSocket.getOutputStream());
 					out.reset();
 					out.writeObject(msg);
-					
 					break;
+					
 				case LOGOUT:
+					System.out.println("El usuario " + username + " se ha desconectado.");
 					break;
 				
 				default:
-					System.out.println("Case default");
+					System.out.println("Envio de mensaje inadecuado.");
 					break;	
 				}
-				
-				
-//				if (!(inputLine.getType().equals(ChatMessage.MessageType.LOGOUT))) {
-//					ChatMessage msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, username + " : " + inputLine.getMessage());
-//					chatServer.broadcast(msg);
-//				} else {
-//					break;
-//				}
 			}
 		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.err.println("El usuario " + username + " se ha desconectado forzosamente.");
 		} finally {
-			System.out.println("El usuario " + username + " se ha desconectado.");
 			chatServer.remove(id);
 			this.interrupt();
 		}

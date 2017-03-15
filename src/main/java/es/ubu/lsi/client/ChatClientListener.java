@@ -28,6 +28,7 @@ public class ChatClientListener implements Runnable {
 						System.out.print(">" + inputLine.getMessage() + "\n>");
 					} else {
 						baneados.put(inputLine.getId(), inputLine.getMessage());
+						System.out.println(baneados.get(inputLine.getId()) + "ha sido baneado.");
 					}
 				}
 			}
