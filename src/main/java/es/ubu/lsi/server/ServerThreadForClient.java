@@ -58,6 +58,7 @@ public class ServerThreadForClient extends Thread {
 					msg = new ChatMessage(idBan, ChatMessage.MessageType.BAN, inputLine.getMessage());
 					out.reset();
 					out.writeObject(msg);
+					System.out.println(username + " ha baneado a " + inputLine.getMessage());
 					break;
 				
 				case UNBAN:
@@ -72,6 +73,7 @@ public class ServerThreadForClient extends Thread {
 					msg = new ChatMessage(idUnBan, ChatMessage.MessageType.UNBAN, inputLine.getMessage());
 					out.reset();
 					out.writeObject(msg);
+					System.out.println(username + " ha eliminado el baneado sobre " + inputLine.getMessage());
 					break;
 
 					
