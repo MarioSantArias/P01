@@ -36,7 +36,9 @@ public class ChatClientListener implements Runnable {
 					break;
 					
 				case UPDATEBAN:
-					baneados.put(inputLine.getId(), inputLine.getMessage());
+					if(baneados.containsKey(inputLine)){
+						baneados.put(inputLine.getId(), inputLine.getMessage());
+					}
 					break;
 					
 				case MESSAGE:
