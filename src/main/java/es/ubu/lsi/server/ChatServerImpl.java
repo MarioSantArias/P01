@@ -73,7 +73,7 @@ public class ChatServerImpl implements ChatServer {
 		for (ServerThreadForClient client : conectedClients) {
 			try {
 				if (message.getId() != client.getClientId()) {
-					out = new ObjectOutputStream(client.getClientSocket().getOutputStream());
+					out = client.getOutputStream();
 					out.reset();
 					out.writeObject(message);
 				}

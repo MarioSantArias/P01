@@ -13,18 +13,20 @@ public class ServerThreadForClient extends Thread {
 	private String username;
 	private Socket clientSocket;
 	private ChatServerImpl chatServer;
+	private ObjectOutputStream out;
 
-	public ServerThreadForClient(int id, ChatServerImpl chatserver, Socket clientSocket) {
+	public ServerThreadForClient(int id, ChatServerImpl chatserver, Socket clientSocket) throws IOException {
 		this.id = id;
 		this.clientSocket = clientSocket;
 		this.chatServer = chatserver;
+		out = new ObjectOutputStream(this.clientSocket.getOutputStream());
 	}
 
 	@Override
 	public void run() {
 		try {
 			ObjectInputStream in = new ObjectInputStream(this.clientSocket.getInputStream());
-			ObjectOutputStream out = new ObjectOutputStream(this.clientSocket.getOutputStream());;
+			
 
 			ChatMessage inputLine;
 
@@ -101,5 +103,9 @@ public class ServerThreadForClient extends Thread {
 
 	public String getUsername() {
 		return username;
+	}
+	
+	public ObjectOutputStream getOutputStream(){
+		return out;
 	}
 }
