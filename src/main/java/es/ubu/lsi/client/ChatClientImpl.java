@@ -99,13 +99,23 @@ public class ChatClientImpl implements ChatClient {
 			while (flagContinue) {
 				System.out.print(">");
 				read = sc.nextLine();
+				//------------------------OPCION LOGAUT---------------------------------
 				if (read.equals("logout")) {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.LOGOUT, read));
 					sc.close();
 					cliente.disconnect();
+			
+				//------------------------OPCION BAN---------------------------------
 				} else if (read.split(" ")[0].equals("ban")) {
 						cliente.sendMessage(
-								new ChatMessage(cliente.id, ChatMessage.MessageType.BAN, read.split(" ")[1]));	
+								new ChatMessage(cliente.id, ChatMessage.MessageType.BAN, read.split(" ")[1]));
+				
+				//------------------------OPCION UNBAN---------------------------------
+				} else if (read.split(" ")[0].equals("unban")) {
+					cliente.sendMessage(
+							new ChatMessage(cliente.id, ChatMessage.MessageType.UNBAN, read.split(" ")[1]));
+				
+				//------------------------OPCION MESSAGE---------------------------------
 				} else {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read));
 				}
