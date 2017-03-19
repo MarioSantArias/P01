@@ -27,12 +27,12 @@ public class ChatClientListener implements Runnable {
 				
 				case BAN:
 					baneados.put(inputLine.getId(), inputLine.getMessage());
-					System.out.print("El usuario \"" + baneados.get(inputLine.getId()) + "\" ha sido baneado.\n>");
+					System.out.print("El usuario \"" + baneados.get(inputLine.getId()) + "\" ha sido baneado.\n> ");
 					break;
 				
 				case UNBAN:
 					baneados.remove(inputLine.getId());
-					System.out.print("El usuario \"" + inputLine.getMessage() + "\" ha sido eliminado de la lista de baneados.\n>");
+					System.out.print("El usuario \"" + inputLine.getMessage() + "\" ha sido eliminado de la lista de baneados.\n> ");
 					break;
 					
 				case UPDATEBAN:
@@ -43,7 +43,7 @@ public class ChatClientListener implements Runnable {
 					
 				case MESSAGE:
 					if (!baneados.containsKey(inputLine.getId())) {
-						System.out.print(">" + inputLine.getMessage() + "\n>");
+						System.out.print(inputLine.getMessage() + "\n> ");
 					}
 					break;
 					
@@ -53,24 +53,11 @@ public class ChatClientListener implements Runnable {
 				
 				}
 				
-				
-				
-//				if (!baneados.containsKey(inputLine.getId())) {
-//					
-//					if (!inputLine.getType().equals(ChatMessage.MessageType.BAN)) {
-//						System.out.print(">" + inputLine.getMessage() + "\n>");
-//						
-//					}else if (inputLine.getType().equals(ChatMessage.MessageType.UNBAN)){
-//						
-//					} else {
-//						baneados.put(inputLine.getId(), inputLine.getMessage());
-//						System.out.println("El usuario \"" + baneados.get(inputLine.getId()) + "\" ha sido baneado.");
-//					}
-//				}
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+//			e.printStackTrace();
+			System.err.println("Error en la conexión con el servidor.");
 		}
 	}
 }

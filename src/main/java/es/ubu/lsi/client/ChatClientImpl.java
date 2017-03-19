@@ -19,7 +19,7 @@ public class ChatClientImpl implements ChatClient {
 	private static Socket socket;
 	private Thread chatClientListenter;
 	private ObjectOutputStream msgToServer;
-	
+
 	public ChatClientImpl(String server, int port, String username) {
 		this.server = server;
 		this.username = username;
@@ -75,7 +75,6 @@ public class ChatClientImpl implements ChatClient {
 	public void setCarryOn(boolean carryOn) {
 		this.carryOn = carryOn;
 	}
-	
 
 	public static void main(String[] args) {
 		final int PUERTO = 1500;
@@ -84,7 +83,10 @@ public class ChatClientImpl implements ChatClient {
 
 		if (args.length != 2) {
 			ip = "localhost";
-			System.out.println("- Introducir nombre de usuario: ");
+			System.out.println("--------------------------------------------");
+			System.out.println("               BIENVENIDO");
+			System.out.println("--------------------------------------------");
+			System.out.print("Introducir tu nombre de usuario: ");
 			user = sc.nextLine();
 		} else {
 			ip = args[0];
@@ -93,29 +95,34 @@ public class ChatClientImpl implements ChatClient {
 		ChatClientImpl cliente = new ChatClientImpl(ip, PUERTO, user);
 
 		if (cliente.start()) {
-			System.out.println("Bienvenido " + user + "!");
+			System.out.println("Logeado como \"" + user + "\"");
+			System.out.println("Comandos para banear, unbanear y salir:");
+
+			System.out.println("\t- BAN + \"username\"");
+			System.out.println("\t- UNBAN + \"username\"");
+			System.out.println("\t- LOGOUT");
+			System.out.println("--------------------------------------------");
+
 			boolean flagContinue = true;
 
 			while (flagContinue) {
-				System.out.print(">");
+				System.out.print("> ");
 				read = sc.nextLine();
-				//------------------------OPCION LOGAUT---------------------------------
+				// -----------------OPCION LOGAUT---------------------
 				if (read.equals("logout")) {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.LOGOUT, read));
 					sc.close();
 					cliente.disconnect();
-			
-				//------------------------OPCION BAN---------------------------------
+
+					// -----------------OPCION BAN---------------------
 				} else if (read.split(" ")[0].equals("ban")) {
-						cliente.sendMessage(
-								new ChatMessage(cliente.id, ChatMessage.MessageType.BAN, read.split(" ")[1]));
-				
-				//------------------------OPCION UNBAN---------------------------------
+					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.BAN, read.split(" ")[1]));
+
+					// -----------------OPCION UNBAN---------------------
 				} else if (read.split(" ")[0].equals("unban")) {
-					cliente.sendMessage(
-							new ChatMessage(cliente.id, ChatMessage.MessageType.UNBAN, read.split(" ")[1]));
-				
-				//------------------------OPCION MESSAGE---------------------------------
+					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.UNBAN, read.split(" ")[1]));
+
+					// -----------------OPCION MESSAGE---------------------
 				} else {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read));
 				}

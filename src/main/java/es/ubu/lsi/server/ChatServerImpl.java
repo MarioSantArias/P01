@@ -37,8 +37,8 @@ public class ChatServerImpl implements ChatServer {
 	public void startup() {
 		try {
 			serverSocket = new ServerSocket(port);
-			System.out.println("Servidor iniciado, esperando conexiones.");
-			System.out.println("--------------------------------------------\n");
+			System.out.println("- Servidor iniciado, esperando conexiones");
+			System.out.println("--------------------------------------------");
 
 			while (true) {
 				Socket clientSocket = serverSocket.accept();
@@ -116,15 +116,22 @@ public class ChatServerImpl implements ChatServer {
 	public static void main(String[] args) {
 		ChatServerImpl chatServer;
 
+		System.out.println("--------------------------------------------");
+		System.out.println("               BIENVENIDO");
+		System.out.println("--------------------------------------------");
+		System.out.println("- Inicializando Chat");
+
 		if (args.length != 1) {
-			System.out.println("Se usará el puerto por defecto: 1500");
+			System.out.println("- Se usará el puerto por defecto(1500)");
 			chatServer = getInstance();
 		} else {
-			System.out.println("Se usara el puerto: " + args[0]);
+			System.out.println("- Se usara el puerto " + args[0]);
 			chatServer = getInstance(Integer.parseInt(args[0]));
 		}
 
-		System.out.println("Iniciando el servidor...");
+		System.out.println("- Iniciando el servidor");
+		System.out.println("                 ....");
+
 		chatServer.startup();
 	}
 	
