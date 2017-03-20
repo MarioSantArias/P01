@@ -15,9 +15,7 @@ public class ChatServerImpl implements ChatServer {
 	private static ChatServerImpl instance = null;
 	private final int DEFAULT_PORT = 1500;
 	private int clientId;
-	private SimpleDateFormat sdf;
 	private int port;
-	private boolean alive;
 	private ServerSocket serverSocket;
 	private List<ServerThreadForClient> conectedClients;
 

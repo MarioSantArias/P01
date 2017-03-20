@@ -14,7 +14,6 @@ public class ChatClientImpl implements ChatClient {
 	private String server;
 	private String username;
 	private int port;
-	private boolean carryOn = true;
 	private int id;
 	private static Socket socket;
 	private Thread chatClientListenter;
@@ -51,7 +50,6 @@ public class ChatClientImpl implements ChatClient {
 			msgToServer.reset();
 			msgToServer.writeObject(msg);
 		} catch (IOException e) {
-			carryOn = false;
 			System.err.println("Couldn't get I/O for the connection to " + server);
 			System.exit(1);
 		}
@@ -66,14 +64,6 @@ public class ChatClientImpl implements ChatClient {
 		} catch (IOException e) {
 			return;
 		}
-	}
-
-	public boolean getCarryOn() {
-		return carryOn;
-	}
-
-	public void setCarryOn(boolean carryOn) {
-		this.carryOn = carryOn;
 	}
 
 	public static void main(String[] args) {
