@@ -4,33 +4,54 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import es.ubu.lsi.common.ChatMessage;
 
+/**
+ * 
+ * @author Felix Nogal
+ * @author Mario Santamaria
+ *
+ */
 public class ChatServerImpl implements ChatServer {
 	
+	/** Instancia del servidor */
 	private static ChatServerImpl instance = null;
+	/** Puerto por defecto para la conexion */
 	private final int DEFAULT_PORT = 1500;
+	/** Contador para los identificadores del cliente */
 	private int clientId;
+	/** Puerto para la conexion */
 	private int port;
+	/** Socket del servidor */
 	private ServerSocket serverSocket;
+	/** Lista de clientes conectados */
 	private List<ServerThreadForClient> conectedClients;
 
+	/**
+	 * Constructor.
+	 */
 	public ChatServerImpl() {
 		this.port = DEFAULT_PORT;
 		clientId = 0;
 		conectedClients = new ArrayList<ServerThreadForClient>();
 	}
 
+	/**
+	 * Constructor.
+	 * @param port El puerto para la conexion.
+	 */
 	public ChatServerImpl(int port) {
 		this.port = port;
 		clientId = 0;
 		conectedClients = new ArrayList<ServerThreadForClient>();
 	}
 
+	/**
+	 * @see #startup()
+	 */
 	@Override
 	public void startup() {
 		try {
@@ -45,12 +66,13 @@ public class ChatServerImpl implements ChatServer {
 				conectedClients.add(thread);
 			}
 		} catch (IOException e) {
-			System.out.println(
-					"Exception caught when trying to listen on port " + port + " or listening for a connection");
-			System.out.println(e.getMessage());
+			System.err.println("Excepcion producida al escuchar por el puerto " + port + " o escuchando nuevas conexiones.");
 		}
 	}
 
+	/**
+	 * @see #shutdown()
+	 */
 	@Override
 	public void shutdown() {
 		try {
@@ -65,6 +87,9 @@ public class ChatServerImpl implements ChatServer {
 		}
 	}
 
+	/**
+	 * @see #broadcast(ChatMessage)
+	 */
 	@Override
 	public synchronized void broadcast(ChatMessage message) {
 		ObjectOutputStream out;
@@ -82,6 +107,9 @@ public class ChatServerImpl implements ChatServer {
 		}
 	}
 	
+	/**
+	 * @see #remove(int)
+	 */
 	@Override
 	public void remove(int id) {
 		for (int i = 0; i < conectedClients.size(); i++) {
@@ -93,6 +121,10 @@ public class ChatServerImpl implements ChatServer {
 		}
 	}
 
+	/**
+	 * Devuelve una instancia del servidor.
+	 * @return La instancia del servidor.
+	 */
 	public static ChatServerImpl getInstance() {
 		if (instance == null) {
 			instance = new ChatServerImpl();
@@ -100,6 +132,11 @@ public class ChatServerImpl implements ChatServer {
 		return instance;
 	}
 
+	/**
+	 * @see #getInstance()
+	 * @param Port el puerto para la conexion.
+	 * @return La instancia del servidor.
+	 */
 	public static ChatServerImpl getInstance(int port) {
 		if (instance == null) {
 			instance = new ChatServerImpl(port);
@@ -107,6 +144,10 @@ public class ChatServerImpl implements ChatServer {
 		return instance;
 	}
 	
+	/**
+	 * Devuelve una lista con los clientes conectados.
+	 * @return Lista de clientes conectados.
+	 */
 	public List<ServerThreadForClient> getConectedClients(){
 		return conectedClients;	
 	}

@@ -9,22 +9,45 @@ import java.util.Scanner;
 
 import es.ubu.lsi.common.ChatMessage;
 
+/**
+ * 
+ * @author Felix Nogal
+ * @author Mario Santamaria
+ *
+ */
 public class ChatClientImpl implements ChatClient {
-
+	
+	/** Nombre del servidor */
 	private String server;
+	/** Nombre del usuario */
 	private String username;
+	/** Puerto para la conexion*/
 	private int port;
+	/** Identifcador del cliente */
 	private int id;
+	/** Socket de conexion con el servidor */
 	private static Socket socket;
+	/** Hilo encargado de escuchar los mensajes del servidor */
 	private Thread chatClientListenter;
+	/** OutputStream para enviar los mensajes al servidor */
 	private ObjectOutputStream msgToServer;
 
+	/**
+	 * Constructor de la clase.
+	 * @param server nombre del servidor para realizar la conexion.
+	 * @param port puerto por el que se establecera la conexion.
+	 * @param username nombre de usuario del cliente.
+	 */
 	public ChatClientImpl(String server, int port, String username) {
 		this.server = server;
 		this.username = username;
 		this.port = port;
 	}
 
+	/**
+	 * @see #start()
+	 */
+	@Override
 	public boolean start() {
 		try {
 			socket = new Socket(server, port);
@@ -35,36 +58,43 @@ public class ChatClientImpl implements ChatClient {
 			chatClientListenter = new Thread(new ChatClientListener(socket));
 			chatClientListenter.start();
 		} catch (UnknownHostException e) {
-			System.err.println("Don't know about host " + server);
+			System.err.println("No se conoce el servidor: " + server);
 			return false;
 		} catch (IOException e) {
-			System.err.println("Couldn't get I/O for the connection to " + server);
+			System.err.println("No se pudo establecer conexion con el servidor: " + server);
 			return false;
 		}
 
 		return true;
 	}
 
+	/**
+	 * @see #sendMessage(ChatMessage) 
+	 */
+	@Override
 	public void sendMessage(ChatMessage msg) {
 		try {
 			msgToServer.reset();
 			msgToServer.writeObject(msg);
 		} catch (IOException e) {
-			System.err.println("Couldn't get I/O for the connection to " + server);
-			System.exit(1);
+			System.err.println("El mensaje no se envio correctamente.");
 		}
 	}
 
+	/**
+	 * @see #disconnect()
+	 */
+	@Override
 	public void disconnect() {
 		try {
 			chatClientListenter.interrupt();
-			msgToServer.close();
 			socket.close();
 			System.exit(1);
 		} catch (IOException e) {
 			return;
 		}
 	}
+
 
 	public static void main(String[] args) {
 		final int PUERTO = 1500;
@@ -79,6 +109,9 @@ public class ChatClientImpl implements ChatClient {
 			System.out.print("Introducir tu nombre de usuario: ");
 			user = sc.nextLine();
 		} else {
+			System.out.println("--------------------------------------------");
+			System.out.println("               BIENVENIDO");
+			System.out.println("--------------------------------------------");
 			ip = args[0];
 			user = args[1];
 		}
@@ -102,6 +135,9 @@ public class ChatClientImpl implements ChatClient {
 				if (read.equals("logout")) {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.LOGOUT, read));
 					sc.close();
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {}
 					cliente.disconnect();
 
 					// -----------------OPCION BAN---------------------

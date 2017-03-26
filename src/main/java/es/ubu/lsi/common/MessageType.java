@@ -15,6 +15,6 @@ public enum MessageType {
 	LOGOUT,
 	/** Baned client. */
 	BAN,
-	/** Update ban id. */
+	/** Update ban. */
 	UPDATEBAN;
 }

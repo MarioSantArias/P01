@@ -7,19 +7,40 @@ import java.net.Socket;
 
 import es.ubu.lsi.common.ChatMessage;
 
+/**
+ * 
+ * @author Felix Nogal
+ * @author Mario Santamaria
+ *
+ */
 public class ServerThreadForClient extends Thread {
 
+	/** Id del cliente */
 	private int id;
+	/** Nombre de usuario */
 	private String username;
+	/** Socket para la conexion con el cliente */
 	private Socket clientSocket;
+	/** Instancia del servidor */
 	private ChatServerImpl chatServer;
+	/** OutputStream para el envio de mensajes */
 	private ObjectOutputStream out;
 
-	public ServerThreadForClient(int id, ChatServerImpl chatserver, Socket clientSocket) throws IOException {
-		this.id = id;
-		this.clientSocket = clientSocket;
-		this.chatServer = chatserver;
-		out = new ObjectOutputStream(this.clientSocket.getOutputStream());
+	/**
+	 * Constructor.
+	 * @param id Identificador del cliente.
+	 * @param chatserver Instancia del servidor.
+	 * @param clientSocket Socket de conexion con el cliente.
+	 */
+	public ServerThreadForClient(int id, ChatServerImpl chatserver, Socket clientSocket) {
+		try {
+			this.id = id;
+			this.clientSocket = clientSocket;
+			this.chatServer = chatserver;
+			out = new ObjectOutputStream(this.clientSocket.getOutputStream());
+		} catch (IOException e) {
+			System.err.println("Error al obtener el OutputStream para el cliente " + username);
+		}
 	}
 
 	@Override
@@ -58,7 +79,8 @@ public class ServerThreadForClient extends Thread {
 					break;
 
 				case LOGOUT:
-					System.out.println("### " + "El usuario " + username + " se ha desconectado.");
+					sendLogoutMsg();
+					System.out.println("### " + "El usuario " + username + " quiere desconectarse.");
 					break;
 
 				default:
@@ -66,15 +88,24 @@ public class ServerThreadForClient extends Thread {
 					break;
 				}
 			}
-		} catch (IOException | ClassNotFoundException e) {
-			// e.printStackTrace();
-			System.err.println("El usuario " + username + " se ha desconectado forzosamente.");
+		} catch (IOException e) {
+			System.out.println("### " + "El usuario " + username + " se ha desconectado.");
+		} catch (ClassNotFoundException e) {
+			System.err.println("Error al leer el mensaje.");
 		} finally {
+			try {
+				clientSocket.close();
+			} catch (IOException e) {}
 			chatServer.remove(id);
 			this.interrupt();
 		}
 	}
 
+	/**
+	 * Metodo auxiliar para enviar informacion de ban y unban.
+	 * @param msgType Tipo de mensaje a enviar.
+	 * @param msg El mensaje.
+	 */
 	private void sendBanInfo(ChatMessage.MessageType msgType, String msg) {
 		try {
 			int id = 0;
@@ -91,19 +122,48 @@ public class ServerThreadForClient extends Thread {
 			System.err.println("Error al enviar mensaje con la informacion de ban/unban.");
 		}
 	}
+	
+	/**
+	 * Metodo auxiliar para enviar un mensaje cuando el cliente desea desconectarse.
+	 */
+	private void sendLogoutMsg() {
+		try {
+			ChatMessage msgToSend = new ChatMessage(id, ChatMessage.MessageType.LOGOUT, "logout");
+			out.reset();
+			out.writeObject(msgToSend);
+		} catch (IOException e) {
+			System.err.println("Error al enviar mensaje de logout.");
+		}
+	}
 
+	/**
+	 * Devuelve el identificador del cliente.
+	 * @return El identificador del cliente.
+	 */
 	public int getClientId() {
 		return id;
 	}
 
+	/**
+	 * Devuelve el socket del cliente.
+	 * @return el socket del cliente.
+	 */
 	public Socket getClientSocket() {
 		return clientSocket;
 	}
 
+	/**
+	 * Devuelve el nombre de usuario.
+	 * @return El nombre de usario.
+	 */
 	public String getUsername() {
 		return username;
 	}
 
+	/**
+	 * Devuelve el OutputStream para el envio de mensajes.
+	 * @return El OutputStream.
+	 */
 	public ObjectOutputStream getOutputStream() {
 		return out;
 	}
