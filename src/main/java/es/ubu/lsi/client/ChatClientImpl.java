@@ -47,7 +47,6 @@ public class ChatClientImpl implements ChatClient {
 	/**
 	 * @see #start()
 	 */
-	@Override
 	public boolean start() {
 		try {
 			socket = new Socket(server, port);
@@ -71,7 +70,6 @@ public class ChatClientImpl implements ChatClient {
 	/**
 	 * @see #sendMessage(ChatMessage) 
 	 */
-	@Override
 	public void sendMessage(ChatMessage msg) {
 		try {
 			msgToServer.reset();
@@ -84,7 +82,6 @@ public class ChatClientImpl implements ChatClient {
 	/**
 	 * @see #disconnect()
 	 */
-	@Override
 	public void disconnect() {
 		try {
 			chatClientListenter.interrupt();

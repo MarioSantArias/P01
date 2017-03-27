@@ -52,7 +52,6 @@ public class ChatServerImpl implements ChatServer {
 	/**
 	 * @see #startup()
 	 */
-	@Override
 	public void startup() {
 		try {
 			serverSocket = new ServerSocket(port);
@@ -73,7 +72,6 @@ public class ChatServerImpl implements ChatServer {
 	/**
 	 * @see #shutdown()
 	 */
-	@Override
 	public void shutdown() {
 		try {
 			for (ServerThreadForClient client : conectedClients) {
@@ -90,7 +88,6 @@ public class ChatServerImpl implements ChatServer {
 	/**
 	 * @see #broadcast(ChatMessage)
 	 */
-	@Override
 	public synchronized void broadcast(ChatMessage message) {
 		ObjectOutputStream out;
 		for (ServerThreadForClient client : conectedClients) {
@@ -110,7 +107,6 @@ public class ChatServerImpl implements ChatServer {
 	/**
 	 * @see #remove(int)
 	 */
-	@Override
 	public void remove(int id) {
 		for (int i = 0; i < conectedClients.size(); i++) {
 			if (conectedClients.get(i).getClientId() == id) {

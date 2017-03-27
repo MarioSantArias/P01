@@ -31,7 +31,6 @@ public class ChatClientListener implements Runnable {
 		this.baneados = new HashMap<Integer, String>();
 	}
 
-	@Override
 	public void run() {
 		try {
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
