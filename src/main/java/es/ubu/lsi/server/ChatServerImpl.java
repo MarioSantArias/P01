@@ -134,7 +134,7 @@ public class ChatServerImpl implements ChatServer {
 
 	/**
 	 * @see #getInstance()
-	 * @param Port el puerto para la conexion.
+	 * @param port el puerto para la conexion.
 	 * @return La instancia del servidor.
 	 */
 	public static ChatServerImpl getInstance(int port) {
