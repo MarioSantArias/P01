@@ -16,12 +16,12 @@ import es.ubu.lsi.common.ChatMessage;
  *
  */
 public class ChatClientImpl implements ChatClient {
-	
+
 	/** Nombre del servidor */
 	private String server;
 	/** Nombre del usuario */
 	private String username;
-	/** Puerto para la conexion*/
+	/** Puerto para la conexion */
 	private int port;
 	/** Identifcador del cliente */
 	private int id;
@@ -34,9 +34,13 @@ public class ChatClientImpl implements ChatClient {
 
 	/**
 	 * Constructor de la clase.
-	 * @param server nombre del servidor para realizar la conexion.
-	 * @param port puerto por el que se establecera la conexion.
-	 * @param username nombre de usuario del cliente.
+	 * 
+	 * @param server
+	 *            nombre del servidor para realizar la conexion.
+	 * @param port
+	 *            puerto por el que se establecera la conexion.
+	 * @param username
+	 *            nombre de usuario del cliente.
 	 */
 	public ChatClientImpl(String server, int port, String username) {
 		this.server = server;
@@ -68,7 +72,7 @@ public class ChatClientImpl implements ChatClient {
 	}
 
 	/**
-	 * @see #sendMessage(ChatMessage) 
+	 * @see #sendMessage(ChatMessage)
 	 */
 	public void sendMessage(ChatMessage msg) {
 		try {
@@ -92,7 +96,12 @@ public class ChatClientImpl implements ChatClient {
 		}
 	}
 
-
+	/**
+	 * Main de la clase.
+	 * 
+	 * @param args
+	 *            Argumentos de entrada(puerto)
+	 */
 	public static void main(String[] args) {
 		final int PUERTO = 1500;
 		String user, ip, read;
@@ -134,7 +143,8 @@ public class ChatClientImpl implements ChatClient {
 					sc.close();
 					try {
 						Thread.sleep(1000);
-					} catch (InterruptedException e) {}
+					} catch (InterruptedException e) {
+					}
 					cliente.disconnect();
 
 					// -----------------OPCION BAN---------------------

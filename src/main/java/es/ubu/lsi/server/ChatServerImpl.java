@@ -16,7 +16,7 @@ import es.ubu.lsi.common.ChatMessage;
  *
  */
 public class ChatServerImpl implements ChatServer {
-	
+
 	/** Instancia del servidor */
 	private static ChatServerImpl instance = null;
 	/** Puerto por defecto para la conexion */
@@ -31,7 +31,7 @@ public class ChatServerImpl implements ChatServer {
 	private List<ServerThreadForClient> conectedClients;
 
 	/**
-	 * Constructor.
+	 * Constructor de la clase.
 	 */
 	public ChatServerImpl() {
 		this.port = DEFAULT_PORT;
@@ -40,8 +40,10 @@ public class ChatServerImpl implements ChatServer {
 	}
 
 	/**
-	 * Constructor.
-	 * @param port El puerto para la conexion.
+	 * Constructor de la clase.
+	 * 
+	 * @param port
+	 *            El puerto para la conexion.
 	 */
 	public ChatServerImpl(int port) {
 		this.port = port;
@@ -65,7 +67,8 @@ public class ChatServerImpl implements ChatServer {
 				conectedClients.add(thread);
 			}
 		} catch (IOException e) {
-			System.err.println("Excepcion producida al escuchar por el puerto " + port + " o escuchando nuevas conexiones.");
+			System.err.println(
+					"Excepcion producida al escuchar por el puerto " + port + " o escuchando nuevas conexiones.");
 		}
 	}
 
@@ -103,7 +106,7 @@ public class ChatServerImpl implements ChatServer {
 			}
 		}
 	}
-	
+
 	/**
 	 * @see #remove(int)
 	 */
@@ -119,6 +122,7 @@ public class ChatServerImpl implements ChatServer {
 
 	/**
 	 * Devuelve una instancia del servidor.
+	 * 
 	 * @return La instancia del servidor.
 	 */
 	public static ChatServerImpl getInstance() {
@@ -130,7 +134,8 @@ public class ChatServerImpl implements ChatServer {
 
 	/**
 	 * @see #getInstance()
-	 * @param port el puerto para la conexion.
+	 * @param port
+	 *            el puerto para la conexion.
 	 * @return La instancia del servidor.
 	 */
 	public static ChatServerImpl getInstance(int port) {
@@ -139,15 +144,22 @@ public class ChatServerImpl implements ChatServer {
 		}
 		return instance;
 	}
-	
+
 	/**
 	 * Devuelve una lista con los clientes conectados.
+	 * 
 	 * @return Lista de clientes conectados.
 	 */
-	public List<ServerThreadForClient> getConectedClients(){
-		return conectedClients;	
+	public List<ServerThreadForClient> getConectedClients() {
+		return conectedClients;
 	}
 
+	/**
+	 * Main de la clase.
+	 * 
+	 * @param args
+	 *            Argumentos de entrada(puerto)
+	 */
 	public static void main(String[] args) {
 		ChatServerImpl chatServer;
 
@@ -169,5 +181,5 @@ public class ChatServerImpl implements ChatServer {
 
 		chatServer.startup();
 	}
-	
+
 }
