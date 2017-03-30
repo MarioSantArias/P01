@@ -65,7 +65,7 @@ public class ServerThreadForClient extends Thread {
 			System.out.println("\t- PORT: " + clientSocket.getPort());
 			System.out.println("\t- USERNAME: " + username + "\n");
 			chatServer.broadcast(new ChatMessage(id, ChatMessage.MessageType.UPDATEBAN, username));
-			msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, "> \"" + username + "\" se ha conectado.");
+			msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, "\"" + username + "\" se ha conectado.");
 			chatServer.broadcast(msg);
 
 			while ((inputLine = (ChatMessage) in.readObject()) != null) {
@@ -91,6 +91,8 @@ public class ServerThreadForClient extends Thread {
 				case LOGOUT:
 					sendLogoutMsg();
 					System.out.println("### " + "El usuario " + username + " quiere desconectarse.");
+					msg = new ChatMessage(id, ChatMessage.MessageType.MESSAGE, "\"" + username + "\" se ha desconectado.");
+					chatServer.broadcast(msg);
 					break;
 
 				default:

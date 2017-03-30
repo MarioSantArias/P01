@@ -101,7 +101,6 @@ public class ChatServerImpl implements ChatServer {
 					out.writeObject(message);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

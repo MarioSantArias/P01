@@ -137,6 +137,8 @@ public class ChatClientImpl implements ChatClient {
 			while (flagContinue) {
 				System.out.print("> ");
 				read = sc.nextLine();
+				String[] banCommand = read.split(" ");
+				
 				// -----------------OPCION LOGAUT---------------------
 				if (read.equals("logout")) {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.LOGOUT, read));
@@ -148,14 +150,16 @@ public class ChatClientImpl implements ChatClient {
 					cliente.disconnect();
 
 					// -----------------OPCION BAN---------------------
-				} else if (read.split(" ")[0].equals("ban")) {
+				} else if (banCommand[0].equals("ban") && banCommand.length == 2) {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.BAN, read.split(" ")[1]));
 
 					// -----------------OPCION UNBAN---------------------
-				} else if (read.split(" ")[0].equals("unban")) {
+				} else if (banCommand.equals("unban") && banCommand.length == 2) {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.UNBAN, read.split(" ")[1]));
 
 					// -----------------OPCION MESSAGE---------------------
+				} else if (banCommand[0].equals("ban") || banCommand[0].equals("unban")) {
+					System.out.println("> Comando ban/unban incorrecto.");
 				} else {
 					cliente.sendMessage(new ChatMessage(cliente.id, ChatMessage.MessageType.MESSAGE, read));
 				}
